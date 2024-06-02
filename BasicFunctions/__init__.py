@@ -1,0 +1,1 @@
+# This package is to use the Universal Approximation Theorem on basic functions (exponencial, sine, cosine, etc.)
