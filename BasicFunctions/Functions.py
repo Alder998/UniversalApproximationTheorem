@@ -7,7 +7,7 @@ class functions ():
     def __init__ (self):
         pass
 
-    # Let's build a simple continuous function
+    # Let's build simple continuous function
 
     # Sine function
     def sineFunction(self, x):
