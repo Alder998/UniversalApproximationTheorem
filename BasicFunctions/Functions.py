@@ -3,24 +3,25 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-class functions ():
-    def __init__ (self):
+class functions:
+    def __init__ (self, x=0):
+        self.x = x
         pass
 
     # Let's build simple continuous function
 
     # Sine function
-    def sineFunction(self, x):
-        return math.sin(x)
+    def sineFunction(self):
+        return math.sin(self.x)
 
     # Cosine function
-    def cosineFunction(self, x):
-        return math.cos(x)
+    def cosineFunction(self):
+        return math.cos(self.x)
 
     # Exponential Function
-    def exponentialFunction(self, x):
-        return math.exp(x)
+    def exponentialFunction(self):
+        return math.exp(self.x)
 
     # Quadratic function
-    def quadraticFunction (self, x):
-        return x ** 2
+    def quadraticFunction (self):
+        return self.x ** 2
