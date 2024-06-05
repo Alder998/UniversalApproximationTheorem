@@ -10,15 +10,14 @@ class utils:
 
     class functions:
 
-        def __init__ (self, function):
-            self.function = Functions
+        def __init__ (self):
             pass
 
-        def generateFunctionByPoints (self, pointStart=0, pointEnd=10, steps=500):
+        def generateFunctionByPoints (self, function, pointStart=0, pointEnd=10, steps=500):
 
             pointsList = list()
             for value in np.linspace(pointStart, pointEnd, steps):
-                pointsList.append(self.function.functions(value))
+                pointsList.append(function(value))
 
             return pointsList
 

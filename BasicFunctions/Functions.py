@@ -3,7 +3,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-class functions:
+class Functions:
     def __init__ (self, x=0):
         self.x = x
         pass
