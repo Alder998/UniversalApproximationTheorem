@@ -25,3 +25,4 @@ class Functions:
     # Quadratic function
     def quadraticFunction (self):
         return self.x ** 2
+
