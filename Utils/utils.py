@@ -44,6 +44,11 @@ class utils:
                                                random_state = random_state,
                                                test_size = test_size)
 
-            return [XTrain, XTest, YTrain, YTest]
+            TrainX = np.array(XTrain)
+            TrainY = np.array(YTrain)
+            TestX = np.array(XTest)
+            TestY = np.array(YTest)
+
+            return [TrainX, TrainY, TestX, TestY]
 
 

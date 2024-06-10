@@ -9,7 +9,7 @@ class NNModel:
     def __init__ (self):
         pass
 
-    def trainAndEvaluateNNModel (self, XTrain, YTrain, XTest, YTest, epochs = 50):
+    def trainAndEvaluateNNModelForBasicFunctions (self, XTrain, YTrain, XTest, YTest, epochs = 50):
 
         model = keras.Sequential ([
             layers.Dense(200, activation = 'relu', input_shape=(1,)),
