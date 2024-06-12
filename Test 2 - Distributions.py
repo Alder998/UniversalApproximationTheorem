@@ -6,7 +6,7 @@ import pandas as pd
 import Models.NeuralNetworkModel as model
 
 # Define and Plot a sine function, for example
-function = lambda x: dis.Distributions(x).normalDistributionPDF()
+function = lambda x: dis.Distributions(x).normalDistributionCDF()
 # Get the dataset
 ySet = utils.utils().functions().generateFunctionByPoints(function, pointStart=-5, pointEnd=5, steps=5000)[1]
 xSet = utils.utils().functions().generateFunctionByPoints(function, pointStart=-5, pointEnd=5, steps=5000)[0]

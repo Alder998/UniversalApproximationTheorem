@@ -15,3 +15,8 @@ class Distributions:
     def normalDistributionPDF(self, sigma=1, mu=0):
         closedForm = 1 / (np.sqrt(2*np.pi * sigma ** 2)) * np.exp((-1 / 2) * ((self.x - mu) / sigma) ** 2)
         return closedForm
+
+    # Now we are implementing the Normal Distribution CDF, with the formula 1/2 * (1 + erf((x-mu) / sigma*sqrt(2)))
+    def normalDistributionCDF(self, sigma=1, mu=0):
+        closedForm = 1/2 * (1 + math.erf((self.x - mu) / sigma * np.sqrt(2)))
+        return closedForm
