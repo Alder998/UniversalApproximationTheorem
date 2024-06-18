@@ -20,3 +20,19 @@ class Distributions:
     def normalDistributionCDF(self, sigma=1, mu=0):
         closedForm = 1/2 * (1 + math.erf((self.x - mu) / sigma * np.sqrt(2)))
         return closedForm
+
+    # Let's define a normal Mixture distribution, therefore a distribution that resemble a product of known
+    # Distributions
+    def normalMixtureDistributionPDF (self, numberOfDistributions, mus, sigmas):
+        closedForm = list()
+        for singleDistribution in range(numberOfDistributions):
+            closedFormI = (1 / (np.sqrt(2 * np.pi * sigmas[singleDistribution] ** 2)) *
+                           np.exp((-1 / 2) * ((self.x - mus[singleDistribution]) / sigmas[singleDistribution]) ** 2))
+            closedForm.append(closedFormI)
+
+        # get the product
+        finalClosedForm = np.prod(np.array(closedForm))
+
+        return finalClosedForm
+
+
