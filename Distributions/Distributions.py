@@ -1,6 +1,8 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import yfinance as yf
 
 # It is not possible, as it is common belief, to approximate a distribution as
 # it will be a generic function (i.e. generating random points, and making our net "Following" them). We can try to
@@ -34,5 +36,15 @@ class Distributions:
         finalClosedForm = np.prod(np.array(closedForm))
 
         return finalClosedForm
+
+    # Start with Finance (finally): function to create the empirical Dsitribution function starting from the % returns
+    # of a stock
+
+    def empiricalDistributionFromTradedStock (self, ticker, period, interval):
+
+        returnSample = (yf.Ticker(ticker).history(period, interval)['Close'].pct_change() * 100).dropna()
+        ecdf = sm.distributions.ECDF(np.array(returnSample))
+
+        return ecdf
 
 

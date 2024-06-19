@@ -10,8 +10,7 @@ sigmas = [1, 3]
 numberOfDistributions = len(mus)
 
 # Define and Plot a function, for example
-function = lambda x: dis.Distributions(x).normalMixtureDistributionPDF(numberOfDistributions,
-                                                                       mus, sigmas)
+function = lambda x: dis.Distributions(x).empiricalDistributionFromTradedStock('AAPL','2d', '1m')
 # Get the dataset
 dataset = utils.utils().functions().generateFunctionByPoints(function, pointStart=-5, pointEnd=5, steps=5000)
 
