@@ -9,31 +9,46 @@ from tensorflow.keras.layers import Input, Layer
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import MeanSquaredError
 from Distributions import Distributions as d
+import numpy as np
 
-class NNbasedOptimization (Layer):
+class normalPDFFunctionLayer(Layer):
     def __init__(self, **kwargs):
-        super(NNbasedOptimization, self).__init__(**kwargs)
-        self.parametersToOptimize = []
-        pass
+        super(normalPDFFunctionLayer, self).__init__(**kwargs)
+        self.mu = self.add_weight(name='x', shape=(1,), initializer='random_normal', trainable=True)
+        self.sigma = self.add_weight(name='y', shape=(1,), initializer='random_normal', trainable=True)
 
-    # Let's try to use the function that we got from Distribution
+    def call(self, inputs):
+        return d.Distributions(inputs).normalDistributionCDF(self.mu, self.sigma, operator='tf')
 
-    def generateFunctionLayer (self, x):
-        for singleParam in self.parametersToOptimize:
-            self.add_weight(name=singleParam, shape=(1,), initializer='random_normal', trainable=True)
+    def buildModel (self, X_train, Y_train, X_test, Y_test, epochs):
 
-    def knownFunctionApproximator (self):
-
+        # Define the Model
         inputs = Input(shape=(1,))
-        outputs = self.generateFunctionLayer()
+        outputs = normalPDFFunctionLayer()(inputs)
         model = Model(inputs, outputs)
 
-        # Compile the Model
-        model.compile(optimizer=Adam(learning_rate=0.01), loss=MeanSquaredError())
+        # Model Compilation
+        model.compile(optimizer='adam', loss='mean_squared_error')
 
-        # See the optimized Parameters
+        # Model Training
+        model.fit(X_train, Y_train, epochs=epochs)
+
+        # Test set Model evaluation
+        loss = model.evaluate(X_test, Y_test, verbose=0)
+        print(f'Test set Loss: {loss:.4f}')
+
+        # Print Optimized Paramters
         optimized_weights = model.get_layer(index=1).get_weights()
-        print(f'Ottimizzati x: {optimized_weights[0][0]}, y: {optimized_weights[1][0]}')
+        print(f'Optimized Parameters mu: {optimized_weights[0][0]}, sigma: {optimized_weights[1][0]}')
 
-    def buildModel(self):
+        # Predict the fitted values
+        YPredictions = model.predict(X_test)
+
+        return YPredictions
+
+
+
+
+
+
 
