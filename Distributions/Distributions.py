@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import yfinance as yf
 import pandas as pd
+from tensorflow.keras.layers import Input, Layer
 import tensorflow as tf
 
 # It is not possible, as it is common belief, to approximate a distribution as
@@ -16,7 +17,10 @@ class Distributions:
         pass
 
     # Now the normal PDF must be implemented: it is: 1/(sqrt(2pi * sigma**2)) * e^((-1/2)*((x - mu) / sigma)**2)
-    def normalDistributionPDF(self, sigma=1, mu=0, operator='np'):
+    def normalDistributionPDF(self, sigma=1, mu=0, operator='np', return_params=False):
+        if (return_params):
+            params = {'Params': ['mu', 'sigma'], 'values': [mu, sigma]}
+            return params
         if operator == 'np':
             closedForm = 1 / (np.sqrt(2*np.pi * sigma ** 2)) * np.exp((-1 / 2) * ((self.x - mu) / sigma) ** 2)
         if operator == 'tf':
@@ -24,7 +28,10 @@ class Distributions:
         return closedForm
 
     # Now we are implementing the Normal Distribution CDF, with the formula 1/2 * (1 + erf((x-mu) / sigma*sqrt(2)))
-    def normalDistributionCDF(self, sigma=1, mu=0, operator='np'):
+    def normalDistributionCDF(self, sigma=1, mu=0, operator='np', return_params=False):
+        if (return_params):
+            params = {'Params': ['mu', 'sigma'], 'values': [mu, sigma]}
+            return params
         if operator == 'np':
             closedForm = 1/2 * (1 + math.erf((self.x - mu) / sigma * np.sqrt(2)))
         if operator == 'tf':
@@ -34,7 +41,12 @@ class Distributions:
 
     # Let's define a normal Mixture distribution, therefore a distribution that resemble a product of known
     # Distributions
-    def normalMixtureDistributionPDF (self, numberOfDistributions, mus, sigmas):
+    def normalMixtureDistributionPDF (self, numberOfDistributions, mus, sigmas, return_params=False):
+        if (return_params):
+            musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
+            sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
+            params = {'Params': [musName + sigmasName], 'values': [mus + sigmas]}
+            return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
             closedFormI = (1 / (np.sqrt(2 * np.pi * sigmas[singleDistribution] ** 2)) *

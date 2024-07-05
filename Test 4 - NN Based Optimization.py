@@ -1,9 +1,9 @@
 import Distributions.Distributions as dis
 import Utils.utils as utils
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import Models.NNBasedOptimization as model
+from DistributionLayers import LayerFunctions as ly
 
 # Train Set: the Selected Stock's Empirical Distribution
 # Test Set: A 2 normal mixture distribution, that we can allow to float according the mean and the Volatility
@@ -11,15 +11,16 @@ import Models.NNBasedOptimization as model
 
 numberOfDistributions = 1
 
-# Known function to put in the model
-function = lambda x, mu, sigma: dis.Distributions(x).normalMixtureDistributionPDF(numberOfDistributions, mu, sigma)
+# Define the function
+functionParam = dis.Distributions().normalDistributionPDF(return_params=True)
+layerAssociatedToFunction = ly.LayerFunctions(functionParam).getLayerFromFunction()
 
 # Target function that we aim to approximate
-functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AAPL','7d', '1m')
+functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('TSLA','1d', '1m')
 sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).trainTestSplit()
 
-epochs = 500
-modelPrediction = model.normalPDFFunctionLayer().buildModel(sample[0], sample[1], sample[2],
+epochs = 100
+modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
                                                                         sample[3], epochs = epochs)
 
 # Plot the prediction against the actual function representation

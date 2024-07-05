@@ -11,20 +11,16 @@ from tensorflow.keras.losses import MeanSquaredError
 from Distributions import Distributions as d
 import numpy as np
 
-class normalPDFFunctionLayer(Layer):
-    def __init__(self, **kwargs):
-        super(normalPDFFunctionLayer, self).__init__(**kwargs)
-        self.mu = self.add_weight(name='x', shape=(1,), initializer='random_normal', trainable=True)
-        self.sigma = self.add_weight(name='y', shape=(1,), initializer='random_normal', trainable=True)
-
-    def call(self, inputs):
-        return d.Distributions(inputs).normalDistributionCDF(self.mu, self.sigma, operator='tf')
+class functionLayer:
+    def __init__(self, Layer, **kwargs):
+        super(functionLayer, self).__init__(**kwargs)
+        self.layer = Layer
 
     def buildModel (self, X_train, Y_train, X_test, Y_test, epochs):
 
         # Define the Model
         inputs = Input(shape=(1,))
-        outputs = normalPDFFunctionLayer()(inputs)
+        outputs = self.layer(inputs)
         model = Model(inputs, outputs)
 
         # Model Compilation
