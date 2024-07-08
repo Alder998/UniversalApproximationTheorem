@@ -10,20 +10,20 @@ from Distributions import Distributions as d
 
 # Class created just to implement Layers for NN-based Optimization
 
-class LayerFunctions:
-    def __init__ (self, distributionParam,  **kwargs):
+class LayerFunctions (Layer):
+    def __init__ (self, distributionParam, **kwargs):
         super(LayerFunctions, self).__init__(**kwargs)
         self.distributionParam = distributionParam
         pass
 
-    def call (self, inputs):
-        return d.Distributions(inputs).normalDistributionPDF(self.distributionParam['values'][0], self.distributionParam['values'][1])
+    def build(self, input_shape):
+        for param_name in self.distributionParam['Params']:
+            setattr(self, param_name, self.add_weight(name=param_name, shape=(1,), initializer='random_normal', trainable=True))
 
-    def getLayerFromFunction (self):
-        newLayer = Layer()
-        for idx in range(len(self.distributionParam['Params'])):
-            newLayer.add_weight(name=self.distributionParam['Params'][idx], shape=(1,), initializer='random_normal', trainable=True)
-        return newLayer
+    def call(self, inputs):
+        mu = getattr(self, 'mu')
+        sigma = getattr(self, 'sigma')
+        return d.Distributions(inputs).normalDistributionCDF(sigma, mu, operator='tf')
 
 
 

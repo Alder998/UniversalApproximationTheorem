@@ -10,6 +10,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import MeanSquaredError
 from Distributions import Distributions as d
 import numpy as np
+from tensorflow.keras import losses
 
 class functionLayer:
     def __init__(self, Layer, **kwargs):
@@ -24,7 +25,7 @@ class functionLayer:
         model = Model(inputs, outputs)
 
         # Model Compilation
-        model.compile(optimizer='adam', loss='mean_squared_error')
+        model.compile(optimizer='adam', loss=losses.MeanAbsoluteError())
 
         # Model Training
         model.fit(X_train, Y_train, epochs=epochs)
