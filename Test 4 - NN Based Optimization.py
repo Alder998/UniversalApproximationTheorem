@@ -14,13 +14,13 @@ numberOfDistributions = 1
 # Define the function
 functionParam = dis.Distributions().normalDistributionCDF(return_params=True)
 function = lambda x, mu, sigma, operator: dis.Distributions(x).normalDistributionCDF(mu, sigma, operator)
-layerAssociatedToFunction = ly.LayerFunctions(functionParam)
+layerAssociatedToFunction = ly.LayerFunctions(functionParam, function)
 
 # Target function that we aim to approximate
-functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('UCG.MI','7d', '1m')
+functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AMZN','7d', '1m')
 sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).trainTestSplit()
 
-epochs = 100
+epochs = 50
 modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
                                                                         sample[3], epochs = epochs)
 

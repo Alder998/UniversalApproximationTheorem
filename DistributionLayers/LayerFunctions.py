@@ -1,19 +1,12 @@
-import math
-import numpy as np
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
-import yfinance as yf
-import pandas as pd
 from tensorflow.keras.layers import Input, Layer
-import tensorflow as tf
-from Distributions import Distributions as d
 
 # Class created just to implement Layers for NN-based Optimization
 
 class LayerFunctions (Layer):
-    def __init__ (self, distributionParam, **kwargs):
+    def __init__ (self, distributionParam, function, **kwargs):
         super(LayerFunctions, self).__init__(**kwargs)
         self.distributionParam = distributionParam
+        self.function = function
         pass
 
     def build(self, input_shape):
@@ -23,7 +16,7 @@ class LayerFunctions (Layer):
     def call(self, inputs):
         mu = getattr(self, 'mu')
         sigma = getattr(self, 'sigma')
-        return d.Distributions(inputs).normalDistributionCDF(sigma, mu, operator='tf')
+        return self.function(inputs, mu, sigma, operator='tf')
 
 
 
