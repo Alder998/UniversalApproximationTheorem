@@ -32,9 +32,15 @@ class LayerFunctionMultiple (Layer):
 
     # Here is required to include an array of parameters and "unpack" them
     def call(self, inputs):
-        mu = getattr(self, 'mu')
-        sigma = getattr(self, 'sigma')
-        return self.function(inputs, mu, sigma, operator='tf')
+        mus = []
+        sigmas = []
+        for param in self.distributionParam['Params']:
+            if 'mu' in param:
+                mus.append(getattr(self, param))
+            if 'sigma' in param:
+                sigmas.append(getattr(self, param))
+
+        return self.function(inputs, [mu for mu in mus], [sigma for sigma in sigmas], operator='tf')
 
 
 

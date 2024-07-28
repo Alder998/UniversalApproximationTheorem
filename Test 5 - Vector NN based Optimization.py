@@ -14,11 +14,10 @@ mus = [0, 1]
 sigmas = [0.3, 0.5]
 
 # Normal Mixture function
-functionParam = dis.Distributions().normalMixtureDistributionPDF(numberOfDistributions, mus, sigmas, return_params=True)
-print(functionParam)
-# TODO: Set the function that can handle multiple parameters
-function = lambda x, mu, sigma, operator: dis.Distributions(x).normalDistributionCDF(mu, sigma, operator)
-layerAssociatedToFunction = ly.LayerFunctions(functionParam, function)
+functionParam = dis.Distributions().normalMixtureDistributionCDF(numberOfDistributions, mus, sigmas, return_params=True)
+function = lambda x, mu0, mu1, sigma0, sigma1, operator: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
+                                                                            [mu0, mu1], [sigma0, sigma1], operator)
+layerAssociatedToFunction = ly.LayerFunctionMultiple(functionParam, function)
 
 # Target function that we aim to approximate
 functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AMZN','7d', '1m')

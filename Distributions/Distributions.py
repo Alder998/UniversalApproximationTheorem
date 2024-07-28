@@ -45,12 +45,33 @@ class Distributions:
         if (return_params):
             musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
             sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
-            params = {'Params': [musName + sigmasName], 'values': [mus + sigmas]}
+            params = {'Params': musName + sigmasName, 'values': mus + sigmas}
             return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
             closedFormI = (1 / (np.sqrt(2 * np.pi * sigmas[singleDistribution] ** 2)) *
                            np.exp((-1 / 2) * ((self.x - mus[singleDistribution]) / sigmas[singleDistribution]) ** 2))
+            closedForm.append(closedFormI)
+
+        # get the product
+        finalClosedForm = np.prod(np.array(closedForm))
+
+        return finalClosedForm
+
+    # Mixture CDF
+    def normalMixtureDistributionCDF (self, numberOfDistributions, mus, sigmas, operator = 'np', return_params=False):
+        if (return_params):
+            musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
+            sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
+            params = {'Params': musName + sigmasName, 'values': mus + sigmas}
+            return params
+        closedForm = list()
+        for singleDistribution in range(numberOfDistributions):
+            if operator == 'np':
+                closedFormI = 1 / 2 * (1 + math.erf((self.x - mus[singleDistribution]) / sigmas[singleDistribution] * np.sqrt(2)))
+            if operator == 'tf':
+                self.x = tf.cast(self.x, tf.float32)
+                closedFormI = 1 / 2 * (1 + tf.math.erf((self.x - mus[singleDistribution]) / sigmas[singleDistribution] * tf.sqrt(2.0)))
             closedForm.append(closedFormI)
 
         # get the product
