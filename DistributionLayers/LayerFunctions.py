@@ -19,4 +19,22 @@ class LayerFunctions (Layer):
         return self.function(inputs, mu, sigma, operator='tf')
 
 
+class LayerFunctionMultiple (Layer):
+    def __init__ (self, distributionParam, function, **kwargs):
+        super(LayerFunctionMultiple, self).__init__(**kwargs)
+        self.distributionParam = distributionParam
+        self.function = function
+        pass
+
+    def build(self, input_shape):
+        for param_name in self.distributionParam['Params']:
+            setattr(self, param_name, self.add_weight(name=param_name, shape=(1,), initializer='random_normal', trainable=True))
+
+    # Here is required to include an array of parameters and "unpack" them
+    def call(self, inputs):
+        mu = getattr(self, 'mu')
+        sigma = getattr(self, 'sigma')
+        return self.function(inputs, mu, sigma, operator='tf')
+
+
 
