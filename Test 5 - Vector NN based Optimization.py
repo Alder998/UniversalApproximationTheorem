@@ -10,23 +10,21 @@ from DistributionLayers import LayerFunctions as ly
 # to find the best path
 
 numberOfDistributions = 2
-mus = [0, 1]
-sigmas = [0.3, 0.5]
+multiple = numberOfDistributions != 1
 
 # Normal Mixture function
-functionParam = dis.Distributions().normalMixtureDistributionCDF(numberOfDistributions, mus, sigmas, return_params=True)
-function = lambda x, mu0, mu1, sigma0, sigma1, operator: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
-                                                                            [mu0, mu1], [sigma0, sigma1], operator)
+functionParam = dis.Distributions().normalMixtureDistributionCDF(numberOfDistributions, return_params=True)
+function = lambda x, mus, sigmas, operator: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
+                                                                        [mu for mu in mus], [sigma for sigma in sigmas], operator)
 layerAssociatedToFunction = ly.LayerFunctionMultiple(functionParam, function)
 
 # Target function that we aim to approximate
 functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AMZN','7d', '1m')
 sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).trainTestSplit()
 
-epochs = 50
+epochs = 10
 modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
-                                                                        sample[3], epochs = epochs)
-
+                                                                        sample[3], epochs = epochs, multiple=multiple)
 # Plot the prediction against the actual function representation
 plt.figure(figsize = (12, 5))
 plt.scatter (x=sample[2], y=modelPrediction, label="Prediction")

@@ -17,7 +17,7 @@ class functionLayer:
         super(functionLayer, self).__init__(**kwargs)
         self.layer = Layer
 
-    def buildModel (self, X_train, Y_train, X_test, Y_test, epochs):
+    def buildModel (self, X_train, Y_train, X_test, Y_test, epochs, multiple = False):
 
         # Define the Model
         inputs = Input(shape=(1,))
@@ -36,7 +36,10 @@ class functionLayer:
 
         # Print Optimized Paramters
         optimized_weights = model.get_layer(index=1).get_weights()
-        print(f'Optimized Parameters mu: {optimized_weights[0][0]}, sigma: {optimized_weights[1][0]}')
+        if multiple:
+            print(f'Optimized Parameters mus: {optimized_weights[0]}, sigmas: {optimized_weights[1]}')
+        else:
+            print(f'Optimized Parameters mu: {optimized_weights[0][0]}, sigma: {optimized_weights[1][0]}')
 
         # Predict the fitted values
         YPredictions = model.predict(X_test)

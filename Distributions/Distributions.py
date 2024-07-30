@@ -59,11 +59,11 @@ class Distributions:
         return finalClosedForm
 
     # Mixture CDF
-    def normalMixtureDistributionCDF (self, numberOfDistributions, mus, sigmas, operator = 'np', return_params=False):
+    def normalMixtureDistributionCDF (self, numberOfDistributions, mus = [], sigmas = [], operator = 'np', return_params=False):
         if (return_params):
             musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
             sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
-            params = {'Params': musName + sigmasName, 'values': mus + sigmas}
+            params = {'Params': musName + sigmasName}
             return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
@@ -75,11 +75,12 @@ class Distributions:
             closedForm.append(closedFormI)
 
         # get the product
-        finalClosedForm = np.prod(np.array(closedForm))
+        finalClosedForm = tf.cast(tf.reduce_prod(closedForm), tf.float32)
+        finalClosedForm = tf.reshape(finalClosedForm, (1,))
 
         return finalClosedForm
 
-    # Start with Finance (finally): function to create the empirical Dsitribution function starting from the % returns
+    # Start with Finance (finally): function to create the empirical Distribution function starting from the % returns
     # of a stock
 
     def empiricalDistributionFromTradedStock (self, ticker, period, interval, datasetStart=-1, datasetEnd=1,
