@@ -40,7 +40,7 @@ class LayerFunctionMultiple (Layer):
             if 'sigma' in param:
                 sigmas.append(getattr(self, param))
 
-        return self.function(inputs, [mu for mu in mus], [sigma for sigma in sigmas], operator='tf')
+        return self.function(inputs, mus, sigmas, operator='tf')
 
 
 

@@ -9,13 +9,13 @@ from DistributionLayers import LayerFunctions as ly
 # Test Set: A 2 normal mixture distribution, that we can allow to float according the mean and the Volatility
 # to find the best path
 
-numberOfDistributions = 2
+numberOfDistributions = 5
 multiple = numberOfDistributions != 1
 
 # Normal Mixture function
 functionParam = dis.Distributions().normalMixtureDistributionCDF(numberOfDistributions, return_params=True)
 function = lambda x, mus, sigmas, operator: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
-                                                                        [mu for mu in mus], [sigma for sigma in sigmas], operator)
+                                                                        mus, sigmas, operator)
 layerAssociatedToFunction = ly.LayerFunctionMultiple(functionParam, function)
 
 # Target function that we aim to approximate
@@ -24,7 +24,9 @@ sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).
 
 epochs = 10
 modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
-                                                                        sample[3], epochs = epochs, multiple=multiple)
+                                                                        sample[3], epochs=epochs, multiple=multiple)
+print(len(modelPrediction))
+print(len(sample[2]))
 # Plot the prediction against the actual function representation
 plt.figure(figsize = (12, 5))
 plt.scatter (x=sample[2], y=modelPrediction, label="Prediction")
