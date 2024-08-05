@@ -74,9 +74,12 @@ class Distributions:
                 closedFormI = 1 / 2 * (1 + tf.math.erf((self.x - mus[singleDistribution]) / sigmas[singleDistribution] * tf.sqrt(2.0)))
             closedForm.append(closedFormI)
 
+        # Stack the closedForm list to create a tensor of shape (None, numberOfDistributions)
+        stackedClosedForm = tf.stack(closedForm, axis=1)
         # get the product
-        finalClosedForm = tf.cast(tf.reduce_prod(closedForm), tf.float32)
-        finalClosedForm = tf.reshape(finalClosedForm, (1,))
+        finalClosedForm = tf.reduce_prod(stackedClosedForm, axis=1)
+        # reshape the layer
+        finalClosedForm = tf.reshape(finalClosedForm, (-1, 1))
 
         return finalClosedForm
 

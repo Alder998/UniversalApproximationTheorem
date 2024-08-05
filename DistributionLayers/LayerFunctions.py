@@ -1,4 +1,5 @@
 from tensorflow.keras.layers import Input, Layer
+import tensorflow as tf
 
 # Class created just to implement Layers for NN-based Optimization
 
@@ -41,6 +42,7 @@ class LayerFunctionMultiple (Layer):
                 sigmas.append(getattr(self, param))
 
         return self.function(inputs, mus, sigmas, operator='tf')
+
 
 
 

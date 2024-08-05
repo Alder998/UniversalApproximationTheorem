@@ -6,11 +6,11 @@ import pandas as pd
 import Models.NeuralNetworkModel as model
 
 mus = [0, 0.03]
-sigmas = [1, 3]
+sigmas = [0.7, 1.5]
 numberOfDistributions = len(mus)
 
 # Define and Plot a function, for example
-function = lambda x: dis.Distributions(x).normalMixtureDistributionPDF(numberOfDistributions,
+function = lambda x: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
                                                                        mus, sigmas)
 # Get the dataset
 dataset = utils.utils().functions().generateFunctionByPoints(function, pointStart=-5, pointEnd=5, steps=5000)

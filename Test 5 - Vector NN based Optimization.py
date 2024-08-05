@@ -9,7 +9,7 @@ from DistributionLayers import LayerFunctions as ly
 # Test Set: A 2 normal mixture distribution, that we can allow to float according the mean and the Volatility
 # to find the best path
 
-numberOfDistributions = 5
+numberOfDistributions = 2
 multiple = numberOfDistributions != 1
 
 # Normal Mixture function
