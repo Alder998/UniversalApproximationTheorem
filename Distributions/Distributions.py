@@ -6,6 +6,7 @@ import yfinance as yf
 import pandas as pd
 from tensorflow.keras.layers import Input, Layer
 import tensorflow as tf
+import scipy.special
 
 # It is not possible, as it is common belief, to approximate a distribution as
 # it will be a generic function (i.e. generating random points, and making our net "Following" them). We can try to
@@ -45,7 +46,9 @@ class Distributions:
         if (return_params):
             musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
             sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
-            params = {'Params': musName + sigmasName, 'values': mus + sigmas}
+            params = {'Distribution': 'Normal',
+                      'Params': musName + sigmasName,
+                      'values': mus + sigmas}
             return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
@@ -63,7 +66,8 @@ class Distributions:
         if (return_params):
             musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
             sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
-            params = {'Params': musName + sigmasName}
+            params = {'Distribution': 'Normal',
+                      'Params': musName + sigmasName}
             return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
@@ -82,6 +86,22 @@ class Distributions:
         finalClosedForm = tf.reshape(finalClosedForm, (-1, 1))
 
         return finalClosedForm
+
+    def studentsTDistributionCDF (self, v = 0, operator = 'np', return_params = False):
+        if return_params:
+            params = {'Distribution': 'StudentsT',
+                      'Params': 'v'}
+            return params
+        if operator == 'np':
+            for singleParam in v:
+                closedForm = 1/2 + self.x * ( ((scipy.special.gamma( (singleParam+1)/2 )) / (np.sqrt(np.pi * singleParam) * (scipy.special.gamma(singleParam/2))))
+                                          * scipy.special.hyp2f1(1/2, (singleParam+1)/2, 3/2, -(self.x / singleParam)) )
+        if operator == 'tf':
+            for singleParam in v:
+                self.x = tf.cast(self.x, tf.float32)
+                closedForm = 1/2 + self.x * ( ((scipy.special.gamma( (singleParam+1)/2 )) / (tf.sqrt(np.pi * singleParam) * (scipy.special.gamma(singleParam/2))))
+                                          * scipy.special.hyp2f1(1/2, (singleParam+1)/2, 3/2, -(self.x / singleParam)) )
+        return closedForm
 
     # Start with Finance (finally): function to create the empirical Distribution function starting from the % returns
     # of a stock

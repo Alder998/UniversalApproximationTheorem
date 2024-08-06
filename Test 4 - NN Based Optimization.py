@@ -12,9 +12,9 @@ from DistributionLayers import LayerFunctions as ly
 numberOfDistributions = 1
 
 # Define the function
-functionParam = dis.Distributions().normalDistributionCDF(return_params=True)
-function = lambda x, mu, sigma, operator: dis.Distributions(x).normalDistributionCDF(mu, sigma, operator)
-layerAssociatedToFunction = ly.LayerFunctions(functionParam, function)
+functionParam = dis.Distributions().studentsTDistributionCDF(return_params=True)
+function = lambda x, v, operator: dis.Distributions(x).studentsTDistributionCDF(v, operator)
+layerAssociatedToFunction = ly.generalizedSingleLayerFunctions(functionParam, function)
 
 # Target function that we aim to approximate
 functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AMZN','7d', '1m')

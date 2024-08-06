@@ -19,14 +19,13 @@ function = lambda x, mus, sigmas, operator: dis.Distributions(x).normalMixtureDi
 layerAssociatedToFunction = ly.LayerFunctionMultiple(functionParam, function)
 
 # Target function that we aim to approximate
-functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('AMZN','7d', '1m')
+functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('UCG.MI','4d', '1m')
 sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).trainTestSplit()
 
-epochs = 10
+epochs = 50
 modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
                                                                         sample[3], epochs=epochs, multiple=multiple)
-print(len(modelPrediction))
-print(len(sample[2]))
+
 # Plot the prediction against the actual function representation
 plt.figure(figsize = (12, 5))
 plt.scatter (x=sample[2], y=modelPrediction, label="Prediction")

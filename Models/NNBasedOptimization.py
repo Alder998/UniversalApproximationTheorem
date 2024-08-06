@@ -34,10 +34,10 @@ class functionLayer:
         loss = model.evaluate(X_test, Y_test, verbose=0)
         print(f'Test set Loss: {loss:.4f}')
 
-        # Print Optimized Paramters
+        # Print Optimized Parameters
         optimized_weights = model.get_layer(index=1).get_weights()
         if multiple:
-            print(f'Optimized Parameters mus: {optimized_weights[0]}, sigmas: {optimized_weights[1]}')
+            print(f'Optimized Parameters mus: {optimized_weights}, sigmas: {optimized_weights}')
         else:
             print(f'Optimized Parameters mu: {optimized_weights[0][0]}, sigma: {optimized_weights[1][0]}')
 
