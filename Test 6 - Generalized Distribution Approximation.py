@@ -6,17 +6,25 @@ import Models.NNBasedOptimization as model
 from DistributionLayers import LayerFunctions as ly
 
 # Train Set: the Selected Stock's Empirical Distribution
-# Test Set: A 2 normal mixture distribution, that we can allow to float according the mean and the Volatility
-# to find the best path
+# Test Set: Try to stak two distributions: one Normal and one Student's T
 
-numberOfDistributions = 3
+# Generalized Mixture Distribution - Params
+functionParamWrapper = dis.Distributions().distributionWrapper(distributionFunctions = [
+    dis.Distributions().studentsTDistributionCDF(return_params=True),
+    dis.Distributions().normalDistributionCDF(return_params=True)
+], return_params = True)
+
+# General useful params
+numberOfDistributions = len(functionParamWrapper)
 multiple = numberOfDistributions != 1
 
-# Normal Mixture function
-functionParam = dis.Distributions().normalMixtureDistributionCDF(numberOfDistributions, return_params=True)
-function = lambda x, mus, sigmas, operator: dis.Distributions(x).normalMixtureDistributionCDF(numberOfDistributions,
-                                                                        mus, sigmas, operator)
-layerAssociatedToFunction = ly.LayerFunctionMultiple(functionParam, function)
+# Generalized Mixture Distribution - Functions
+functionWrapper = dis.Distributions().distributionWrapper(distributionFunctions = [
+    lambda x, mu, sigma, operator: dis.Distributions(x).normalDistributionCDF(mu, sigma, operator),
+    lambda x, v, operator: dis.Distributions(x).studentsTDistributionCDF(v, operator)
+])
+
+layerAssociatedToFunction = ly.generalizedLayerFunctionMultiple(functionParamWrapper, functionWrapper)
 
 # Target function that we aim to approximate
 functionDataSet = dis.Distributions().empiricalDistributionFromTradedStock('UCG.MI','4d', '1m')

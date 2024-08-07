@@ -66,10 +66,14 @@ class Distributions:
     # Mixture CDF
     def normalMixtureDistributionCDF (self, numberOfDistributions, mus = [], sigmas = [], operator = 'np', return_params=False):
         if (return_params):
-            musName = ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]
-            sigmasName = ['sigma' + str(value) for value in np.arange (0, numberOfDistributions)]
+            musName = {'mus': ['mu' + str(value) for value in np.arange (0, numberOfDistributions)]}
+            sigmasName = {'sigmas': ['sigma' + str(value) for value in np.arange(0, numberOfDistributions)]}
             params = {'Distribution': 'Normal',
-                      'Params': musName + sigmasName}
+                      'Params': {
+                        'mus': musName['mus'],
+                        'sigmas': sigmasName['sigmas']
+                        }
+                      }
             return params
         closedForm = list()
         for singleDistribution in range(numberOfDistributions):
@@ -92,7 +96,8 @@ class Distributions:
     def studentsTDistributionCDF (self, v = [10], operator = 'np', return_params = False):
         if return_params:
             params = {'Distribution': 'StudentsT',
-                      'Params': 'v'}
+                      'Params': {'v': 'v'}
+                      }
             return params
         if operator == 'np':
             for singleParam in v:
@@ -130,4 +135,17 @@ class Distributions:
 
         return [flatSample, fittedECDF]
 
+    # This function is to create mixture distributions from any possible distribution
+    def distributionWrapper (self, distributionFunctions, return_params = False):
+        if return_params:
+            combined_params = {i + 1: d for i, d in enumerate(distributionFunctions)}
+            return combined_params
+        else:
+            # Stack the closedForm list to create a tensor of shape (None, numberOfDistributions)
+            stackedClosedForm = tf.stack(distributionFunctions, axis=1)
+            # get the product
+            finalClosedForm = tf.reduce_prod(stackedClosedForm, axis=1)
+            # reshape the layer
+            finalClosedForm = tf.reshape(finalClosedForm, (-1, 1))
 
+            return finalClosedForm
