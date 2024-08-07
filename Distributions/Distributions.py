@@ -7,6 +7,8 @@ import pandas as pd
 from tensorflow.keras.layers import Input, Layer
 import tensorflow as tf
 import scipy.special
+from Utils.utils import utils
+
 
 # It is not possible, as it is common belief, to approximate a distribution as
 # it will be a generic function (i.e. generating random points, and making our net "Following" them). We can try to
@@ -87,7 +89,7 @@ class Distributions:
 
         return finalClosedForm
 
-    def studentsTDistributionCDF (self, v = 0, operator = 'np', return_params = False):
+    def studentsTDistributionCDF (self, v = [10], operator = 'np', return_params = False):
         if return_params:
             params = {'Distribution': 'StudentsT',
                       'Params': 'v'}
@@ -99,8 +101,15 @@ class Distributions:
         if operator == 'tf':
             for singleParam in v:
                 self.x = tf.cast(self.x, tf.float32)
-                closedForm = 1/2 + self.x * ( ((scipy.special.gamma( (singleParam+1)/2 )) / (tf.sqrt(np.pi * singleParam) * (scipy.special.gamma(singleParam/2))))
-                                          * scipy.special.hyp2f1(1/2, (singleParam+1)/2, 3/2, -(self.x / singleParam)) )
+
+                x2 = tf.square(self.x)
+                denom = x2 + singleParam
+                reg_beta = utils.functions().regularized_beta(x2 / denom, 0.5 * singleParam, 0.5)
+
+                # Calcola la CDF utilizzando la relazione con la funzione Beta regolarizzata
+                closedForm = 0.5 + tf.sign(self.x) * 0.5 * reg_beta
+                closedForm = tf.reshape(closedForm, (-1, 1))
+
         return closedForm
 
     # Start with Finance (finally): function to create the empirical Distribution function starting from the % returns

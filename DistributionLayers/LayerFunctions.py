@@ -35,7 +35,7 @@ class generalizedSingleLayerFunctions (Layer):
         params = list()
         for param_name in self.distributionParam['Params']:
             params.append(getattr(self, param_name))
-        return self.function(inputs, params, operator='tf')
+        return self.function(inputs, [param for param in params], operator='tf')
 
 
 class LayerFunctionMultiple (Layer):

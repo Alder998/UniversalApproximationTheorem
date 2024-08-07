@@ -13,7 +13,7 @@ numberOfDistributions = 1
 
 # Define the function
 functionParam = dis.Distributions().studentsTDistributionCDF(return_params=True)
-function = lambda x, v, operator: dis.Distributions(x).studentsTDistributionCDF(v, operator)
+function = lambda x, vs, operator: dis.Distributions(x).studentsTDistributionCDF([v for v in vs], operator)
 layerAssociatedToFunction = ly.generalizedSingleLayerFunctions(functionParam, function)
 
 # Target function that we aim to approximate
@@ -22,7 +22,8 @@ sample = utils.utils.dataSetPreparation(functionDataSet[1], functionDataSet[0]).
 
 epochs = 50
 modelPrediction = model.functionLayer(layerAssociatedToFunction).buildModel(sample[0], sample[1], sample[2],
-                                                                        sample[3], epochs = epochs)
+                                                                        sample[3], epochs = epochs, multiple = False,
+                                                                        distribution = functionParam['Distribution'])
 
 # Plot the prediction against the actual function representation
 plt.figure(figsize = (12, 5))

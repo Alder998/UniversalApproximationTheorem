@@ -17,12 +17,14 @@ class functionLayer:
         super(functionLayer, self).__init__(**kwargs)
         self.layer = Layer
 
-    def buildModel (self, X_train, Y_train, X_test, Y_test, epochs, multiple = False):
+    def buildModel (self, X_train, Y_train, X_test, Y_test, epochs, multiple = False, distribution  = 'Normal'):
 
         # Define the Model
         inputs = Input(shape=(1,))
         outputs = self.layer(inputs)
         model = Model(inputs, outputs)
+
+        print(model.summary())
 
         # Model Compilation
         model.compile(optimizer='adam', loss=losses.MeanAbsoluteError())
@@ -36,10 +38,12 @@ class functionLayer:
 
         # Print Optimized Parameters
         optimized_weights = model.get_layer(index=1).get_weights()
-        if multiple:
+        if multiple and distribution == 'Normal':
             print(f'Optimized Parameters mus: {optimized_weights}, sigmas: {optimized_weights}')
-        else:
+        elif distribution == 'Normal':
             print(f'Optimized Parameters mu: {optimized_weights[0][0]}, sigma: {optimized_weights[1][0]}')
+        elif distribution == 'StudentsT':
+            print(f'Optimized Parameters: degrees of freedom: {optimized_weights[0]}')
 
         # Predict the fitted values
         YPredictions = model.predict(X_test)

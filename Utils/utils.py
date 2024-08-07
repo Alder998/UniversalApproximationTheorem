@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import tensorflow as tf
+import tensorflow.math as tfm
 
 class utils:
 
@@ -28,6 +30,24 @@ class utils:
             plt.figure(figsize=(15, 5))
             plt.plot(functionSet)
             plt.show()
+
+        def gamma_approx(self, x):
+            return tf.sqrt(2 * np.pi / x) * (x / np.e) ** x
+
+        def regularized_beta(self, x, a, b):
+            # a and b must be the same size
+            a = tf.broadcast_to(a, tf.shape(x))
+            b = tf.broadcast_to(b, tf.shape(x))
+            return tfm.betainc(a, b, x)
+
+        @tf.function
+        def hyp2f1_series(self, a, b, c, z, terms=50):
+            result = tf.ones_like(z)
+            term = tf.ones_like(z)
+            for n in range(1, terms):
+                term *= (a + n - 1) * (b + n - 1) / ((c + n - 1) * n) * z
+                result += term
+            return result
 
     class dataSetPreparation:
 
