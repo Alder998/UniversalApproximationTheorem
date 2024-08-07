@@ -40,6 +40,17 @@ class utils:
             b = tf.broadcast_to(b, tf.shape(x))
             return tfm.betainc(a, b, x)
 
+        def convert_params_to_float(self, params_dict):
+
+            paramsToConvert = list()
+            for k, v in params_dict.items():
+                for value in v['Params']:
+                    paramsToConvert.append(value)
+
+            print(paramsToConvert)
+
+            return {i: tf.constant(float(i), dtype=tf.float32) for i in paramsToConvert}
+
         @tf.function
         def hyp2f1_series(self, a, b, c, z, terms=50):
             result = tf.ones_like(z)

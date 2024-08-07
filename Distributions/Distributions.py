@@ -96,7 +96,7 @@ class Distributions:
     def studentsTDistributionCDF (self, v = [10], operator = 'np', return_params = False):
         if return_params:
             params = {'Distribution': 'StudentsT',
-                      'Params': {'v': 'v'}
+                      'Params': ['v']
                       }
             return params
         if operator == 'np':
@@ -105,6 +105,8 @@ class Distributions:
                                           * scipy.special.hyp2f1(1/2, (singleParam+1)/2, 3/2, -(self.x / singleParam)) )
         if operator == 'tf':
             for singleParam in v:
+
+                singleParam = tf.cast(singleParam, tf.float32)
                 self.x = tf.cast(self.x, tf.float32)
 
                 x2 = tf.square(self.x)
@@ -136,16 +138,28 @@ class Distributions:
         return [flatSample, fittedECDF]
 
     # This function is to create mixture distributions from any possible distribution
-    def distributionWrapper (self, distributionFunctions, return_params = False):
+    def distributionWrapper (self, distributionFunctions, params_list=[], return_params = False):
+        combined_params = {i + 1: d for i, d in enumerate(distributionFunctions)}
         if return_params:
-            combined_params = {i + 1: d for i, d in enumerate(distributionFunctions)}
             return combined_params
-        else:
-            # Stack the closedForm list to create a tensor of shape (None, numberOfDistributions)
-            stackedClosedForm = tf.stack(distributionFunctions, axis=1)
-            # get the product
-            finalClosedForm = tf.reduce_prod(stackedClosedForm, axis=1)
-            # reshape the layer
-            finalClosedForm = tf.reshape(finalClosedForm, (-1, 1))
 
-            return finalClosedForm
+        convertedParams = utils.functions().convert_params_to_float(params_list)
+
+        # Total params
+        tot_params = list()
+        for value in params_list:
+            tot_params.append(params_list[value]['Params'])
+
+        results = []
+        for func, params in zip(distributionFunctions, tot_params):
+            results.append(func(self.x, params[0], 'tf'))
+            print('Distribution appended')
+
+        # Stack the results list to create a tensor
+        stackedClosedForm = tf.stack(results, axis=0)
+        # get the product
+        finalClosedForm = tf.reduce_prod(stackedClosedForm, axis=0)
+        # reshape the layer
+        finalClosedForm = tf.reshape(finalClosedForm, (-1, 1))
+
+        return finalClosedForm

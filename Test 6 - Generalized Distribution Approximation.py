@@ -20,9 +20,9 @@ multiple = numberOfDistributions != 1
 
 # Generalized Mixture Distribution - Functions
 functionWrapper = dis.Distributions().distributionWrapper(distributionFunctions = [
+    lambda x, v, operator: dis.Distributions(x).studentsTDistributionCDF(v, operator),
     lambda x, mu, sigma, operator: dis.Distributions(x).normalDistributionCDF(mu, sigma, operator),
-    lambda x, v, operator: dis.Distributions(x).studentsTDistributionCDF(v, operator)
-])
+], params_list=functionParamWrapper)
 
 layerAssociatedToFunction = ly.generalizedLayerFunctionMultiple(functionParamWrapper, functionWrapper)
 
